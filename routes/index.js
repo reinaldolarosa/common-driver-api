@@ -5,6 +5,6 @@ const vehicleRoutes = require('./vehicleRoutes');
 const router = express.Router();
 
 router.use('/auth', authRoutes);
-router.use('/api', vehicleRoutes);
+router.use('/vehicle', vehicleRoutes);
 
 module.exports = router;
