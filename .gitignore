@@ -1,0 +1,50 @@
+# Carpeta de dependencias de Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Archivos de entorno (sensibles)
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archivos de configuración de MongoDB (si usas local)
+/data/
+/dump/
+
+# Archivos de build (si usas TypeScript o Webpack)
+/dist/
+/build/
+/out/
+/.nuxt/
+/.next/
+
+# Logs y archivos temporales
+*.log
+*.log.*
+*.trace
+/tmp/
+/logs/
+
+# Configuración de VS Code, WebStorm, etc.
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Configuración de pruebas
+coverage/
+.nyc_output/
+mocha.opts
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de base de datos local (opcional)
+*.sqlite
+*.db
