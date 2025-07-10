@@ -6,6 +6,7 @@ const VehicleSchema = new mongoose.Schema({
   placa: {type: String, required: true, unique: true},
   color: {type: String, required: true},
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  status: {type:Boolean,required:true},
   createdAt: { type: Date, default: Date.now }
 });
 
