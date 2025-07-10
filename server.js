@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const routes = require('./routes');
+const googleRoutes = require('./routes/googleRoutes');
 const errorHandler = require('./middleware/error');
 const session = require('express-session');
 const passport = require('./config/passport'); // Archivo que acabamos de crear
@@ -33,45 +34,7 @@ connectDB();
 // Rutas
 app.use('/api', routes);
 
-// Rutas de autenticación
-app.get('/auth/google',
-  (req, res, next) => {
-    // Guarda el rol en la sesión
-    const { role } = req.query;
-    req.session.authRole = role;
-    next();
-  },
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-  })
-);
-
-app.get('/auth/google/callback',
-  passport.authenticate('google', {
-    failureRedirect: '/login/failed',
-  }),
-  (req, res) => {
-    req.session.authRole = null;
-    res.redirect('/auth/google/success');
-  }
-);
-
-app.get('/auth/google/success', (req, res) => {
-  
-  let response = {user: req.user, token: "ey................."};
-
-  if (!req.user) {
-    return res.status(401).json({ error: 'Not authenticated' });
-  }
-  res.json(response);
-});
-
-app.get('/auth/logout', (req, res) => {
-  req.logout((err) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json({ message: 'Logout exitoso' });
-  });
-});
+app.use('/', googleRoutes);
 
 // Manejo de errores
 app.use(errorHandler);
