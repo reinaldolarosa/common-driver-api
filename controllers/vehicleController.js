@@ -82,10 +82,10 @@ exports.getAllVehicles = async (req, res) => {
 
 /**
  * @desc Get all vehicles for the authenticated user
- * @route GET /api/vehicles/myvehicles
+ * @route GET /api/vehicle/by-user-id
  * @access Private (requires authentication)
  */
-exports.getVehiclesBySpecificUserId = async (req, res) => {
+exports.getVehiclesByUserId = async (req, res) => {
     // 1. Obtener el ID de usuario desde la solicitud
     // Este ID podría venir de:
     // a) req.params.userId (si está en la URL como /vehicles/user/algúnID)

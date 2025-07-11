@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 
 const VehicleSchema = new mongoose.Schema({
-  marca: {type: String, required: true},
-  modelo: {type: String, required: true},
+  brand: {type: String, required: true},
+  model: {type: String, required: true},
   placa: {type: String, required: true, unique: true},
   color: {type: String, required: true},
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   status: {type:Boolean,required:true},
+  numberOfSeats: {type:Number,required:true},
+  numberOfSuitcases: {type:Number,required:true}, 
   createdAt: { type: Date, default: Date.now }
 });
 
