@@ -3,14 +3,16 @@ const mongoose = require('mongoose'); // Importa Mongoose para usar ObjectId
 
 
 exports.saveVehicle = async (req, res) => {
-    const { marca, modelo, placa, color,status } = req.body;
+    const { brand, model, placa, color, status, numberOfSeats, numberOfSuitcases } = req.body;
     const vehicle = new Vehicle({
-        marca,
-        modelo,
+        brand,
+        model,
         placa,
         color,
         userId: req.authData.id,
-        status
+        status,
+        numberOfSeats,
+        numberOfSuitcases
     });
     try {
         await vehicle.save();
@@ -33,9 +35,7 @@ exports.deleteVehicle = async (req, res) => {
     console.log('ID del vehículo a eliminar:', id);
 
     try {
-        // Find the vehicle by its ID and delete it directly
-        // findByIdAndDelete is a common Mongoose method for this.
-        // It returns the deleted document if found, or null if not found.
+
         const deletedVehicle = await Vehicle.findByIdAndDelete(id);
 
         if (deletedVehicle) {
@@ -126,6 +126,67 @@ exports.getVehiclesByUserId = async (req, res) => {
             details: error.message 
         });
     }
+}
+    
+exports.updateVehicle = async (req, res) => {
+    const vehicleId = req.params.id;
+    const { brand, model, placa, color, status, numberOfSeats, numberOfSuitcases } = req.body;
+    const userId = req.authData.id;
+
+    // 1. Validar formato de ID
+    if (!mongoose.Types.ObjectId.isValid(vehicleId)) {
+        return res.status(400).json({ error: 'ID de vehículo inválido' });
+    }
+
+    try {
+        // 2. Buscar vehículo por ID
+        const vehicle = await Vehicle.findById(vehicleId);
+        
+        // 3. Verificar existencia
+        if (!vehicle) {
+            return res.status(404).json({ error: 'Vehículo no encontrado' });
+        }
+
+        // 4. Verificar propiedad del vehículo
+        if (vehicle.userId.toString() !== userId) {
+            return res.status(403).json({ error: 'No autorizado para actualizar este vehículo' });
+        }
+
+        // 5. Validar actualización de placa (si se cambia)
+        if (placa && placa !== vehicle.placa) {
+            const duplicatePlaca = await Vehicle.findOne({ placa });
+            if (duplicatePlaca) {
+                return res.status(400).json({ error: 'La placa ingresada ya está registrada' });
+            }
+        }
+
+        // 6. Actualizar campos
+        vehicle.brand = brand || vehicle.brand;
+        vehicle.model = model || vehicle.model;
+        vehicle.placa = placa || vehicle.placa;
+        vehicle.color = color || vehicle.color;
+        vehicle.status = status || vehicle.status;
+        vehicle.numberOfSeats = numberOfSeats || vehicle.numberOfSeats;
+        vehicle.numberOfSuitcases = numberOfSuitcases || vehicle.numberOfSuitcases;
+
+        // 7. Guardar cambios
+        await vehicle.save();
+
+        res.status(200).json({
+            message: 'Vehículo actualizado exitosamente',
+            vehicle
+        });
+
+    } catch (error) {
+        // Manejo explícito de errores
+        if (error.code === 11000 && error.keyPattern && error.keyPattern.placa === 1) {
+            return res.status(400).json({ error: 'Placa del vehículo ya existe' });
+        }
+
+        console.error('Error al actualizar vehículo:', error.message);
+        res.status(500).json({ error: 'Error al actualizar el vehículo' });
+    }
+
 };
 
 
